@@ -99,12 +99,19 @@
 #define REST      0
 int SENSOR = 0;
 int BUZZ = 3;
-int VALOR;
+int VALOR = 10;
+
+int BTNPIN = 0;
+int btnValue = 1;
+int setBtnValue;
+
+int NUM = 1;
 
 void setup() 
 {
   Serial.begin(9600); // Inicia la comunicación serial
   pinMode(BUZZ,OUTPUT); // Configura el pin 3 como salida
+  pinMode(BTNPIN, INPUT);
 }
 
 int melodia1[]=
@@ -209,46 +216,64 @@ int duraciones3[]=
   };
 void loop() 
 {
+  setBtnValue = digitalRead(BTNPIN); // Lee el estado del boton
   VALOR = analogRead(SENSOR); // Lee el valor del sensor
+  Serial.print("Valor de SENSOR: ");
+  Serial.println(VALOR);
 
- if (VALOR < 600) // Si el valor es menor a 600
- {
-    for(int i=0; i<44;i++) // Reproduce la melodía
+  // Al apretar el boton entrar al IF
+
+  if (setBtnValue == 0) // Si el boton esta apretado
+  {
+    Serial.println("Button pressed");
+    if (VALOR < 600) // Si el valor es menor a 600
     {
-      int duracion = 1000/duraciones1[i]; // Calcula la duración de la nota
-      tone(BUZZ,melodia1[i],duracion); // Emite la nota
-      int pausa=duracion*1.3; // Calcula la pausa entre notas
-      delay(pausa); // Espera la duración de la nota más la pausa
-      noTone(BUZZ); // Apaga el buzzer
+        Serial.println("Melodia numero 1");
+        for(int i=0; i<44;i++) // Reproduce la melodía
+        {
+          int duracion = 1000/duraciones1[i]; // Calcula la duración de la nota
+          tone(BUZZ,melodia1[i],duracion); // Emite la nota
+          int pausa=duracion*1.3; // Calcula la pausa entre notas
+          delay(pausa); // Espera la duración de la nota más la pausa
+          noTone(BUZZ); // Apaga el buzzer
+        }
+        delay(5000); // Espera 5 segundos antes de volver a empezar
     }
-    delay(5000); // Espera 5 segundos antes de volver a empezar
- }
-else if (VALOR > 850) // Si el valor es mayor a 850
- {
-    for(int i=0; i<76;i++) // Reproduce la melodía
+    else if (VALOR > 850) // Si el valor es mayor a 850
     {
-      int duracion = 1000/duraciones2[i];
-      tone(BUZZ,melodia2[i],duracion);
-      int pausa=duracion*1.3;
-      delay(pausa);
-      noTone(BUZZ);
+        Serial.println("Melodia numero 2");
+        for(int i=0; i<76;i++) // Reproduce la melodía
+        {
+          int duracion = 1000/duraciones2[i]; // Calcula la duración de la nota
+          tone(BUZZ,melodia2[i],duracion); // Emite la nota
+          int pausa=duracion*1.3; // Calcula la pausa entre notas
+          delay(pausa); // Espera la duración de la nota más la pausa
+          noTone(BUZZ); // Apaga el buzzer
+        }
+        delay(5000); // Espera 5 segundos antes de volver a empezar
+
     }
-    delay(5000);
- }
- else
- {
-    for(int i=0; i<49;i++)
+    else // Si el valor está entre 600 y 850
     {
-      int duracion = 1000/duraciones3[i];
-      tone(BUZZ,melodia3[i],duracion);
-      int pausa=duracion*1.3;
-      delay(pausa);
-      noTone(BUZZ);
+        Serial.println("Melodia numero 3");
+        for(int i=0; i<44;i++) // Reproduce la melodía
+        {
+          int duracion = 1000/duraciones3[i]; // Calcula la duración de la nota
+          tone(BUZZ,melodia3[i],duracion); // Emite la nota
+          int pausa=duracion*1.3; // Calcula la pausa entre notas
+          delay(pausa); // Espera la duración de la nota más la pausa
+          noTone(BUZZ); // Apaga el buzzer
+        }
+        delay(5000); // Espera 5 segundos antes de volver a empezar
     }
-    delay(5000);
- } 
+  }
+
+  else // Si el boton no esta apretado
+  {
+    Serial.println(".:MUSIC OFF:.");
+  }
+  
 }
-
 // Comentarios:
 /*
 Lo que este codigo hace es definir constantes de frecuencia de notas musicales y luego las usa en un arreglo de melodia. 
